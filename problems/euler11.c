@@ -31,7 +31,7 @@ int main() {
         for(int j = 0; j < GRID_SIZE; j++) {
             // right
             if(j < 17) {
-                greatest = MAX(greatest, grid[i][j] * grid[i][j+1] * grid[i][j+2] * grid[i][j+3]);
+                greatest = MAX(greatest, grid[i][j] * grid[i][j+1] * grid[i][j+2 * grid[i][j+3]);
             }
             // down
             if(i < 17) {
