@@ -22,39 +22,34 @@ long triangle_number(int n) {
     return sum;
 }
 
-long get_factors(int factor_count) {
-    long greatest_count = 0;
-    for(long i = 3; i < 100000; i++) {
-        long count = 0;
-        long triangle = triangle_number(i);
-        for(long j = 1; j <= sqrtl(triangle); j++) {
-            if( triangle % j == 0) {
-                count++;
-                int other = triangle / j;
-                if (triangle % other == 0 && j != other) {
-                    count++;
-                }
+long get_factor(int factor_count) {
+    int greatest = 0;
+    int count = 0;
+    int current = 1;
+    long triangle;
+    while(count < factor_count) {
+        current++;
+        count = 0;
+        triangle = triangle_number(current);
+        for(int i = 1; i < sqrtl(triangle); i++) {
+            if(triangle % i == 0) {
+                count += ((triangle / i) == i) ? 1 : 2;
             }
         }
-
-        if(count > greatest_count) {
-            greatest_count = count;
-            printf("count: %ld, %ld, %ld\n", count, i, triangle);
+        if(greatest < count) {
+            greatest = count;
+            printf("Current: count = %d triangle-number = %ld \n", greatest, triangle);
         }
-        if(factor_count <= count)
-            return triangle;
     }
-    return -1;
+    return triangle;
 }
 
 int main(int argc, char *argv[]) {
     if(argc < 2)
         die("USAGE: euler12 <factor_count>");
-    int n = atoi(argv[1]);
 
-    int x = get_factors(n);
-    if (x == -1)
-        die("No number found with input factors.");
+    int n = atoi(argv[1]);
+    int x = get_factor(n);
 
     printf("Triangle number: %d \n", x );
     return 0;
@@ -64,8 +59,8 @@ int main(int argc, char *argv[]) {
 
     Getting factors.
     Brute Force: check every number up to half the number, and store them, if count != 500 clear it.
+    Made the mistake of doing it with /2 not sqrt 2, once I fixed that, the problem was solved.
 
 
  */
 
-//1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 21, 22, 24, 26, 27, 28, 30, 33, 35, 36, 39, 40, 42, 44, 45, 48, 52, 54, 55, 56, 60, 63, 65, 66, 70, 72, 77, 78, 80, 84, 88, 90, 91, 99, 104, 105, 108, 110, 112, 117, 120, 126, 130, 132, 135, 140, 143, 144, 154, 156, 165, 168, 176, 180, 182, 189, 195, 198, 208, 210, 216, 220, 231, 234, 240, 252, 260, 264, 270, 273, 280, 286, 297, 308, 312, 315, 330, 336, 351, 360, 364, 378, 385, 390, 396, 420, 429, 432, 440, 455, 462, 468, 495, 504, 520, 528, 540, 546, 560, 572, 585, 594, 616, 624, 630, 660, 693, 702, 715, 720, 728, 756, 770, 780, 792, 819, 840, 858, 880, 910, 924, 936, 945, 990, 1001, 1008, 1040, 1080, 1092, 1144, 1155, 1170, 1188, 1232, 1260, 1287, 1320, 1365, 1386, 1404, 1430, 1456, 1485, 1512, 1540, 1560, 1584, 1638, 1680, 1716, 1755, 1820, 1848, 1872, 1890, 1980, 2002, 2079, 2145, 2160, 2184, 2288, 2310, 2340, 2376, 2457, 2520, 2574, 2640, 2730, 2772, 2808, 2860, 2970, 3003, 3024, 3080, 3120, 3276, 3432, 3465, 3510, 3640, 3696, 3780, 3861, 3960, 4004, 4095, 4158, 4290, 4368, 4620, 4680, 4752, 4914, 5005, 5040, 5148, 5460, 5544, 5616, 5720, 5940, 6006, 6160, 6435, 6552, 6864, 6930, 7020, 7280, 7560, 7722, 7920, 8008, 8190, 8316, 8580, 9009, 9240, 9360, 9828, 10010, 10296, 10395, 10920, 11088, 11440, 11880, 12012, 12285, 12870, 13104, 13860, 14040, 15015, 15120, 15444, 16016, 16380, 16632, 17160, 18018, 18480, 19305, 19656, 20020, 20592, 20790, 21840, 23760, 24024, 24570, 25740, 27027, 27720, 28080, 30030, 30888, 32760, 33264, 34320, 36036, 38610, 39312, 40040, 41580, 45045, 48048, 49140, 51480, 54054, 55440, 60060, 61776, 65520, 72072, 77220, 80080, 83160, 90090, 98280, 102960, 108108, 120120, 135135, 144144, 154440, 166320, 180180, 196560, 216216, 240240, 270270, 308880, 360360, 432432, 540540, 720720, 1081080, 2162160,
