@@ -61,6 +61,8 @@ int main() {
     diagonal down Left, shouldn't need to diagonal up right. check 4 > j and i < 17
     diagonal down right. shouldn't need to check diagonal up left. check j < 17 amd i < 17
 
+    This should result in a O(n) solution, as we only scan the grid once.
+
     1   0   0   2   0   0   0   0   0   0   0   0   0   0   1   0   0   0
     0   1   2   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
     0   2   1   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
