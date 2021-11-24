@@ -6,6 +6,7 @@
 #define MAX_LINE 500
 #define NEWLINE 1
 #define MAX(x, y) (x < y) ? y : x
+#define REAL_NUMBER(x) ( 0 > x || x > 9 ) ? 1 : 0
 
 typedef struct file_size{
     int line_count;
@@ -56,16 +57,16 @@ int** parse_file(FILE *fp, file_size fs) {
     if(lines == NULL)
         die("unable to get lines from file");
     int **numbers = malloc( sizeof(int*) * fs.line_count );
-    for(int i = 0; i < fs.line_count; i++) {
-        numbers[i] = malloc( sizeof(int*) * fs.longest_line);
-        int length = strlen(lines[i]) - NEWLINE;
+    for(int y = 0; y < fs.line_count; y++) {
+        numbers[y] = malloc( sizeof(int*) * fs.longest_line);
+        int length = strlen(lines[y]) - NEWLINE;
         int difference = fs.longest_line - length;
-        for(int j = 0; j < difference; j++) {
-            numbers[i][j] = 0;
+        for(int x= 0; x < difference; x++) {
+            numbers[y][x] = 0;
         }
-        for(int j = 0; j < length; j++) {
-            int x = lines[i][j] - '0';
-            numbers[i][j + difference] = ( x < 0 || x > 9 ) ? 0 : x;
+        for(int x = 0; x < length; x++) {
+            int temp = lines[y][x] - '0';
+            numbers[y][x + difference] = ( REAL_NUMBER(temp) ) ? 0 : temp;
         }
 
     }
@@ -93,13 +94,28 @@ int main(int argc, char *argv[]) {
     printf("lines: %d length: %d \n", fs.line_count, fs.longest_line);
 
     int **numbers = parse_file(fptr, fs);
-
-    for(int i = 0; i < fs.line_count; i++) {
-        for(int j = 0; j < fs.longest_line; j++) {
-            printf("%d", numbers[i][j]);
+    int result[fs.longest_line];
+    int carry = 0;
+    for(int column = fs.longest_line - 1; column >= 0; column--) {
+        int sum = 0;
+        sum += carry;
+        for(int row = 0; row < fs.line_count; row++) {
+            sum += numbers[row][column];
         }
-        printf("\n");
+        if(column != 0) {
+            result[column] = (sum % 10);
+            carry = (sum / 10);
+        }
+        else {
+            result[column] = sum;
+        }
     }
+    for(int i = 0; i < fs.longest_line; i++) {
+        printf("%d", result[i]);
+    }
+    printf("\n");
+
+    free(numbers);
 
     fclose(fptr);
     return 0;
@@ -121,4 +137,10 @@ int main(int argc, char *argv[]) {
  *  populate the numbers correctly.
  *
  *  Now we do.
+ *
+ *  Now after all that, we should actually solve the problem, and sum the numbers.
+ *
+ *  I took too much time over-engeneering it for what it needed to be.
+ *  Large part of that, was this is meant to help me learn, and so I went a route that would require me to learn more.
+ *  I also wanted to make sure my solution could be used over again in the future, even if it never needs to be.
 */
