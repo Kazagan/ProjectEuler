@@ -4,6 +4,13 @@
 #include <string.h>
 
 #define MAX_LINE 500
+#define NEWLINE 1
+#define MAX(x, y) (x < y) ? y : x
+
+typedef struct file_size{
+    int line_count;
+    int longest_line;
+} file_size;
 
 
 void die(char *message) {
@@ -15,30 +22,28 @@ void die(char *message) {
     exit(1);
 }
 
-
-int line_count(FILE *fp) {
+file_size get_file_size(FILE *fp) {
     char buff[MAX_LINE];
-    int count = 0;
-    if(fp == NULL) {
-        die("Line_count, file not found");
-    }
+    file_size fs;
+    fs.line_count = 0;
+    fs.longest_line = 0;
     while( fgets (buff, MAX_LINE, fp) != NULL) {
-        count++;
+        fs.line_count++;
+        int x = strlen(buff) - NEWLINE;
+        fs.longest_line = MAX(fs.longest_line, x);
     }
     rewind(fp);
-    return count;
+    return fs;
 }
 
-char** get_lines(FILE *fp, int lines) {
-    char buff[MAX_LINE];
-    char **list = malloc( sizeof(char*) * (lines) );
+char** read_file(FILE *fp, file_size fs) {
+    char buff[fs.longest_line + 1];
+    char **list = malloc( sizeof(char*) * (fs.line_count) );
     if(list == NULL)
         die("failed to allocate lines array");
     int index = 0;
-    if(fp == NULL)
-        die("get_lines file not found");
     while(fgets (buff, MAX_LINE, fp) != NULL) {
-        list[index] = malloc(strlen(buff) + 1);
+        list[index] = malloc(fs.longest_line);
         strcpy(list[index], buff);
         index++;
     }
@@ -46,48 +51,55 @@ char** get_lines(FILE *fp, int lines) {
     return list;
 }
 
+int** parse_file(FILE *fp, file_size fs) {
+    char **lines = read_file(fp, fs);
+    if(lines == NULL)
+        die("unable to get lines from file");
+    int **numbers = malloc( sizeof(int*) * fs.line_count );
+    for(int i = 0; i < fs.line_count; i++) {
+        numbers[i] = malloc( sizeof(int*) * fs.longest_line);
+        int length = strlen(lines[i]) - NEWLINE;
+        int difference = fs.longest_line - length;
+        for(int j = 0; j < difference; j++) {
+            numbers[i][j] = 0;
+        }
+        for(int j = 0; j < length; j++) {
+            int x = lines[i][j] - '0';
+            numbers[i][j + difference] = ( x < 0 || x > 9 ) ? 0 : x;
+        }
+
+    }
+    free(lines);
+    return numbers;
+}
+
+
+
 int main(int argc, char *argv[]) {
     if(argc < 2)
-        die("USAGE: euler13 <fileName>\n File should include at least one 10+digit number, and will print the first 10 digits of the sum of the numbers. \n Each number should be on a new line.");
+        die("USAGE: euler13 <fileName>\n File should include at least one 10+digit number, and will print the first 10 digits of the sum of the numbers. \n Each number should be on a new line and you should have a new line at the end of the file.");
 
     char *file = argv[1];
 
     FILE *fptr = fopen(file, "r");
+    if(fptr == NULL)
+        die("Failed to load file");
 
-    if (fptr == NULL) {
-        die("File failed to load");
+    file_size fs = get_file_size(fptr);
+
+    if(fs.line_count == 0)
+        die("failed to get line count, or file is empty.");
+
+    printf("lines: %d length: %d \n", fs.line_count, fs.longest_line);
+
+    int **numbers = parse_file(fptr, fs);
+
+    for(int i = 0; i < fs.line_count; i++) {
+        for(int j = 0; j < fs.longest_line; j++) {
+            printf("%d", numbers[i][j]);
+        }
+        printf("\n");
     }
-
-    int lines_count = line_count(fptr);
-    if(lines_count == 0)
-        die("failed to get line count");
-
-    char** lines = get_lines(fptr, lines_count);
-    long sum = 0;
-    for(int i = 0; i < lines_count; i ++ ){
-        char *line = lines[i];
-        int size = strlen(line);
-        char *x = malloc(11);
-        strncpy(x, line+(size-10), 11);
-        x[11] = '\0';
-        sum += atol(x);
-
-        printf("%ld\n", atol(x));
-        free(x);
-    }
-    printf("%ld\n", sum);
-    int n = 10;
-    long x = 0;
-    while(n != 0) {
-        int y = sum % 10;
-        sum = sum / 10;
-        x += y;
-        x *= 10;
-        n--;
-        printf("%ld %ld\n", x, sum);
-    }
-    printf("%ld\n", x);
-
 
     fclose(fptr);
     return 0;
@@ -103,4 +115,10 @@ int main(int argc, char *argv[]) {
  *  12345
  *  if we want five, we can divide by 10, and take the remainder. or mod 10
  *  135,740,250
+ *
+ *  I'm probably spending far too long making this more than it needed to be. At this point you can have as many numbers
+ *  as you want, but if you want to work with smaller numbers, it has to be pre-pended with zeroes, because I don't
+ *  populate the numbers correctly.
+ *
+ *  Now we do.
 */
