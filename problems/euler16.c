@@ -13,12 +13,8 @@ int main(void) {
         carry = 0;
         for(int j = 0; j < MAX_SIZE; j++) {
             temp = (2 * number[j]) + carry;
-            carry = 0;
+            carry = (temp > 0) ?  (temp / 10) : 0;
             number[j] = temp % 10;
-
-            if(temp > 0) {
-                carry = temp / 10;
-            }
         }
     }
 
