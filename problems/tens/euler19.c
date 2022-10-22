@@ -1,9 +1,11 @@
-#include "date.h"
+#include "Date.h"
 #include <stdio.h>
 
-int Main() {
-    int x = 5;
-    char* y = &x;
-
-    printf("%d, %s \n", x, y);
+int main() {
+    Date myDate = MIN_DATE;
+    char *day = SDate(myDate);
+    printf("%s\n", myDate);
+    Add_Days(&myDate, 2)
+    return 0;
 }
+
