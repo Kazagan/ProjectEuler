@@ -23,7 +23,7 @@ void month_positive(Date *date);
 void month_negative(Date *date);
 void days_positive(Date *date);
 void days_negative(Date *date);
-int get_days(Date *date);
+int get_days_in_month(Date *date);
 
 char* SDate(Date date) {
     char *day = malloc(1);
@@ -79,7 +79,7 @@ void month_negative(Date *date) {
     }
 }
 
-int get_days(Date *date) {
+int get_days_in_month(Date *date) {
     if(date->Month == 2 && is_leap_year(date->Year)) {
         return 29;
     }
@@ -87,18 +87,37 @@ int get_days(Date *date) {
 }
 
 void days_positive(Date *date) {
-    int days_in_month = get_days(date);
+    int days_in_month = get_days_in_month(date);
     while(date->Day > days_in_month) {
         date->Day -= days_in_month;
         Add_Months(date, 1);
-        days_in_month = get_days(date);
+        days_in_month = get_days_in_month(date);
     }
 }
 
 void days_negative(Date *date) {
     while(date->Day <= 0) {
         Add_Months(date, -1);
-        int days_in_month = get_days(date);
+        int days_in_month = get_days_in_month(date);
         date->Day += days_in_month;
     }
+}
+
+int day_diff(Date first, Date second) {
+    return total_days(&first) - total_days(&second);
+}
+
+int total_days(Date *date) {
+    int output = date->Day;
+    int completed_months = date->Month - 1;
+    while(completed_months > 0) {
+        output += completed_months == 2 && is_leap_year(date->Year) ? 29 : Month_Days[completed_months - 1];
+        completed_months--;
+    }
+    int year = date->Year;
+    while(year > 0) {
+        output += is_leap_year(year) ? 366 : 365;
+        year--;
+    }
+    return output;
 }

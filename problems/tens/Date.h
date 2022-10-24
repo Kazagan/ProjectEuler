@@ -12,3 +12,5 @@ void Add_Days(Date *date, int days);
 void Add_Months(Date *date, int months);
 void Add_Years(Date *date, int years);
 int is_leap_year(int year);
+int day_diff(Date first, Date second);
+int total_days(Date *date);
