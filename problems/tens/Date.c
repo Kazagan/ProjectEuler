@@ -97,8 +97,8 @@ void days_positive(Date *date) {
 
 void days_negative(Date *date) {
     while(date->Day <= 0) {
+        Add_Months(date, -1);
         int days_in_month = get_days(date);
         date->Day += days_in_month;
-        Add_Months(date, -1);
     }
 }
