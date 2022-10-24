@@ -11,4 +11,4 @@ char* SDate(Date date);
 void Add_Days(Date *date, int days);
 void Add_Months(Date *date, int months);
 void Add_Years(Date *date, int years);
-int is_leap_year(Date date);
+int is_leap_year(int year);
