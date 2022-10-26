@@ -2,16 +2,16 @@
 #include <stdio.h>
 
 int main() {
-//    Date myDate = MIN_DATE;
-    Date myDate = MIN_DATE;
-    Date xDate = {01, 01, 0001};
+    Date myDate = {6, 1, 1901, Sunday};
     printf("%s\n", SDate(myDate));
-
-    Add_Days(&myDate, -1000);
-
-    printf("%s\n", SDate(myDate));
-    int days = day_diff(myDate, xDate);
-    printf("%d\n", days);
+    int count = 0;
+    while(myDate.Year < 2001) {
+        if(myDate.Day == 1) {
+            count++;
+            printf("%s\n", SDate(myDate));
+        }
+        Add_Days(&myDate, 7);
+    }
+    printf("%d\n", count);
     return 0;
 }
-
