@@ -31,18 +31,22 @@ int main(int argc, char** argv) {
     int size = SIZE; // Problem requires going to atleast 100! which is 158 characters.
     int *large_number = initialize_array(size, n_string, n_size);        
     
-    while( n > 2) {
-        large_number = multiply_array(large_number, size, --n);
+    int number = n;
+    while( number > 2) {
+        large_number = multiply_array(large_number, size, --number);
         int unused = get_unused(large_number, size);
         if(unused < 50) {
             size = increase_array(&large_number, size);
         }
+        if(number % 100 == 0) { printf("%d, ", number); }
+        if(number % 1000 == 0) { printf("\n"); }
     }
 
     int sum = 0;
     for(int i = 0; i < size; i++) {
         sum += large_number[i];
     }
+    printf("\n");
     print_number(large_number, size);
     printf("sum = %d\n", sum);
     return 0;
